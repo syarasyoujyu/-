@@ -9,7 +9,7 @@ time_lag=0
 WIDTH,HEIGHT=fuda_width*1.2*7,((fuda_num+4)//5+1)*fuda_height*1.2
 
 class karuta:
-
+    
     def __init__(self,screen,show,read,back):
         self.back=back
         self.start=time.time()
@@ -66,18 +66,23 @@ def main():
 
     #setup
     pygame.init()
+    #background
     background=pygame.image.load('../KARUTA/畳.jpeg')
     background=pygame.transform.scale(background,(WIDTH,HEIGHT))
+
     fuda_top=["あ","い","う","え","お","か","き","く","け","こ","さ","し",
               "す","せ","そ","た","ち","つ","て","と","な","に","ぬ","ね",
               "の","は","ひ","ふ","へ","ほ","ま","み","む","め","も","や","ゆ","よ","ら","り","る","れ","ろ","わ","ん"]
     rand_fuda_mem=random.sample([i for i in range(len(fuda_top))],k=fuda_num)
     pygame.mouse.set_visible(True)
+    #fuda
     fuda_show=[pygame.image.load(f'../KARUTA/fuda/show/{fuda_top[i]}.jpeg') for i in (rand_fuda_mem)]
     fuda_read=[pygame.image.load(f'../KARUTA/fuda/read/{fuda_top[i]}.jpeg') for i in (rand_fuda_mem)]
+    #resize fuda
     for i in range(fuda_num):
         fuda_show[i]=pygame.transform.scale(fuda_show[i],(fuda_width,fuda_height))
         fuda_read[i]=pygame.transform.scale(fuda_read[i],(fuda_width,fuda_height))
+
     screen=pygame.display.set_mode((WIDTH,HEIGHT))
     screen.blit(background,(0,0))
     pygame.display.set_caption("Karuta")
