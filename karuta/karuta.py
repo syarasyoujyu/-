@@ -1,21 +1,23 @@
 import pygame,random,time
 from pygame.locals import *
 #the number of karuta
-fuda_num=15
+fuda_num=3
 
 fuda_width,fuda_height=80,160
 #for setting clear time
 time_lag=0
+WIDTH,HEIGHT=fuda_width*1.2*7,((fuda_num+4)//5+1)*fuda_height*1.2
 
 class karuta:
 
-    def __init__(self,screen,show,read):
+    def __init__(self,screen,show,read,back):
+        self.back=back
         self.start=time.time()
         self.count=0
         self.font=pygame.font.Font(None,30)
         self.untaken=[i for i in range(fuda_num)]
         self.show,self.read=show,read
-        self.place=[]
+        self.place=[[i%5*fuda_width*1.2,i//5*fuda_height*1.2] for i in self.untaken]
         self.need_take=random.sample(self.untaken,k=1)[0]
         self.select_show,self.select_read=[[self.show[i],i] for i in self.untaken],[[self.read[i],i] for i in self.untaken]
         self.screen=screen
@@ -24,14 +26,12 @@ class karuta:
 
     #make karuta field (base)
     def static(self):
-        self.screen.fill((250,250,250))
+        self.screen.blit(self.back,(0,0))
         self.select_show,self.select_read=[[self.show[i],i] for i in self.untaken],[[self.read[i],i] for i in self.untaken]
 
         #put karuta untaken
         for img in self.select_show:
-            x,y=img[1]%5*fuda_width*1.2,img[1]//5*fuda_height*1.2
-            self.screen.blit(img[0],(x,y))
-            self.place.append([x,y,img[1]])
+            self.screen.blit(img[0],(self.place[img[1]][0],self.place[img[1]][1]))
         
         #put yomifuda
         text=self.font.render("Karuta to take",True,(130,130,130),(250,250,250))
@@ -39,9 +39,9 @@ class karuta:
         for img in self.select_read:
             if img[1] == self.need_take:
                 self.screen.blit(img[0],(5*fuda_width*1.2,fuda_height/3))
+                break
 
         pygame.display.update()
-
 
     #check whether you take correct one or not(if True, upload yomofuda)
     def touch(self,x,y):
@@ -50,7 +50,7 @@ class karuta:
                 self.untaken.remove(self.need_take)
                 if self.untaken:
                     self.need_take=random.sample(self.untaken,k=1)[0]
-        self.static()
+                self.static()
     
 
     #end of the game
@@ -66,6 +66,8 @@ def main():
 
     #setup
     pygame.init()
+    background=pygame.image.load('../KARUTA/畳.jpeg')
+    background=pygame.transform.scale(background,(WIDTH,HEIGHT))
     fuda_top=["あ","い","う","え","お","か","き","く","け","こ","さ","し",
               "す","せ","そ","た","ち","つ","て","と","な","に","ぬ","ね",
               "の","は","ひ","ふ","へ","ほ","ま","み","む","め","も","や","ゆ","よ","ら","り","る","れ","ろ","わ","ん"]
@@ -76,11 +78,11 @@ def main():
     for i in range(fuda_num):
         fuda_show[i]=pygame.transform.scale(fuda_show[i],(fuda_width,fuda_height))
         fuda_read[i]=pygame.transform.scale(fuda_read[i],(fuda_width,fuda_height))
-    WIDTH,HEIGHT=fuda_width*1.2*7,((fuda_num+4)//5+1)*fuda_height*1.2
     screen=pygame.display.set_mode((WIDTH,HEIGHT))
+    screen.blit(background,(0,0))
     pygame.display.set_caption("Karuta")
     pygame.mouse.set_pos((0,0))
-    game=karuta(screen,fuda_show,fuda_read)
+    game=karuta(screen,fuda_show,fuda_read,background)
     clock=pygame.time.Clock()
     run=True
 
