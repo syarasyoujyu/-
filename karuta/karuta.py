@@ -1,7 +1,7 @@
 import pygame,random,time
 from pygame.locals import *
 #the number of karuta
-fuda_num=3
+fuda_num=15
 
 fuda_width,fuda_height=80,160
 #for setting clear time
